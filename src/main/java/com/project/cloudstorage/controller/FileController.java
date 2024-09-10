@@ -6,6 +6,7 @@ import com.project.cloudstorage.security.ApplicationUser;
 import com.project.cloudstorage.service.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,12 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/file")
 @AllArgsConstructor
 public class FileController {
 
     private final FileService fileService;
 
-    @PostMapping("/upload")
+    @PostMapping("/file")
     public void uploadFile(
             @RequestParam("hash") String hash,
             @RequestParam("file") MultipartFile file,
@@ -31,19 +31,19 @@ public class FileController {
         fileService.saveFile(hash, file, fileName, user);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/file")
     public void deleteFile(@RequestParam("filename") String fileName,
                            @AuthenticationPrincipal ApplicationUser user) throws FileNotFoundException {
         fileService.deleteFile(fileName, user);
     }
 
-    @GetMapping("/download")
+    @GetMapping("/file")
     public Resource downloadFile(@RequestParam("filename") String fileName,
                                  @AuthenticationPrincipal ApplicationUser user) throws IOException {
         return fileService.downloadFile(fileName, user);
     }
 
-    @PutMapping("/edit")
+    @PutMapping("/file")
     public EditFileRequest editFileName(@RequestParam("filename") String fileName,
                                         @RequestBody EditFileRequest fileRequest,
                                         @AuthenticationPrincipal ApplicationUser user) throws IOException {
@@ -56,5 +56,12 @@ public class FileController {
         List<FileDTO> files = fileService.getAllFiles(limit, user);
         return ResponseEntity.ok(files);
     }
+
+//    @GetMapping("/list")
+//    public ResponseEntity<List<FileDTO>> getAllFiles(@RequestParam(defaultValue = "5") Integer limit,
+//                                                     @AuthenticationPrincipal ApplicationUser user) {
+//        List<FileDTO> files = fileService.getAllFiles(limit, user);
+//        return new ResponseEntity<>(files, HttpStatus.OK);
+//    }
 
 }

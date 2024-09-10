@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "token")
+@Table(name = "tokens")
 @Data
 public class Token {
     @Id
@@ -17,7 +17,7 @@ public class Token {
     @Column(name = "token")
     private String token;
 
-    @Column(name = "loggedOut")
+    @Column(name = "logged_out")
     private boolean loggedOut;
 
     @Setter

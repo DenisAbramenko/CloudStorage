@@ -34,7 +34,7 @@ public class AuthenticationService {
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
 
         User user = User.builder()
-                .login(request.getUsername())
+                .login(request.getLogin())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.ROLE_USER)
                 .build();
@@ -61,13 +61,13 @@ public class AuthenticationService {
      */
     public JwtAuthenticationResponse signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
+                request.getLogin(),
                 request.getPassword()
         ));
 
         UserDetails user = userService
                 .userDetailsService()
-                .loadUserByUsername(request.getUsername());
+                .loadUserByUsername(request.getLogin());
 
         String jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
@@ -78,7 +78,7 @@ public class AuthenticationService {
      */
     public void logout(String token) {
         Optional<Token> optionalToken = tokenRepository.findByTokenAndLoggedOutEquals(token, false);
-        if(optionalToken.isEmpty()){
+        if (optionalToken.isEmpty()) {
             return;
         }
         optionalToken.get().setLoggedOut(true);

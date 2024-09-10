@@ -3,7 +3,6 @@ package com.project.cloudstorage.service;
 import com.project.cloudstorage.dto.EditFileRequest;
 import com.project.cloudstorage.dto.FileDTO;
 import com.project.cloudstorage.entity.File;
-import com.project.cloudstorage.entity.User;
 import com.project.cloudstorage.repository.FileRepository;
 import com.project.cloudstorage.repository.UserRepository;
 import com.project.cloudstorage.security.ApplicationUser;
@@ -16,7 +15,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,8 +33,8 @@ public class FileService {
     private final String filePath;
 
     public FileService(UserRepository userRepository,
-                           FileRepository fileRepository,
-                           @Value("${file.storage.path}") String filePath) {
+                       FileRepository fileRepository,
+                       @Value("${file.storage.path}") String filePath) {
         this.userRepository = userRepository;
         this.fileRepository = fileRepository;
         this.filePath = filePath;
@@ -106,7 +108,7 @@ public class FileService {
 
     public List<FileDTO> getAllFiles(Integer limit, ApplicationUser user) {
         var foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new IllegalStateException("Пользователь не найден. id: " + user.getId()));
+                .orElseThrow(() -> new IllegalStateException("Пользователь не найден"));
 
         Page<File> files = fileRepository.findByUser(foundUser, PageRequest.of(0, limit));
 
@@ -121,6 +123,20 @@ public class FileService {
                 })
                 .toList();
     }
+
+//    public List<FileDTO> getAllFiles() {
+//        var files = fileRepository.findAll();
+//        return files.stream()
+//                .map(fileEntity -> {
+//                    FileDTO fileDTO = new FileDTO();
+//                    fileDTO.setId(fileEntity.getId());
+//                    fileDTO.setSize(fileEntity.getSize());
+//                    fileDTO.setName(fileEntity.getName());
+//                    fileDTO.setUploadedDate(fileEntity.getUploadedDate());
+//                    return fileDTO;
+//                })
+//                .toList();
+//    }
 
 
 }
