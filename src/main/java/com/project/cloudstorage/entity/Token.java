@@ -1,13 +1,14 @@
 package com.project.cloudstorage.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "tokens")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

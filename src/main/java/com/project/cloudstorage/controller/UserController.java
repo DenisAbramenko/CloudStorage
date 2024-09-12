@@ -26,19 +26,12 @@ public class UserController {
         return authenticationService.signUp(request);
     }
 
-//    @Operation(summary = "Авторизация пользователя")
-//    @PostMapping("/login")
-//    public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
-//        return authenticationService.signIn(request);
-//    }
-
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/login")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequest request) {
-        String token = String.valueOf(authenticationService.signIn(request));
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        JwtAuthenticationResponse token = (authenticationService.signIn(request));
+        return ResponseEntity.ok(token);
     }
-
 
     @Operation(summary = "Удаление пользователя из системы")
     @PostMapping("/logout")
@@ -46,5 +39,4 @@ public class UserController {
         authenticationService.logout(token);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
 }

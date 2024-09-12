@@ -1,20 +1,19 @@
 package com.project.cloudstorage.controller;
 
-import com.project.cloudstorage.dto.EditFileRequest;
 import com.project.cloudstorage.dto.FileDTO;
-import com.project.cloudstorage.security.ApplicationUser;
+//import com.project.cloudstorage.security.ApplicationUser;
 import com.project.cloudstorage.service.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -24,44 +23,35 @@ public class FileController {
 
     @PostMapping("/file")
     public void uploadFile(
-            @RequestParam("hash") String hash,
+//            @RequestParam("hash") String hash,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("filename") String fileName,
-            @AuthenticationPrincipal ApplicationUser user) {
-        fileService.saveFile(hash, file, fileName, user);
+            @RequestParam("filename") String fileName) throws IOException {
+        fileService.saveFile(file, fileName);
     }
 
     @DeleteMapping("/file")
-    public void deleteFile(@RequestParam("filename") String fileName,
-                           @AuthenticationPrincipal ApplicationUser user) throws FileNotFoundException {
-        fileService.deleteFile(fileName, user);
+    public void deleteFile(@RequestParam("filename") String fileName) throws FileNotFoundException {
+        fileService.deleteFile(fileName);
     }
 
     @GetMapping("/file")
-    public Resource downloadFile(@RequestParam("filename") String fileName,
-                                 @AuthenticationPrincipal ApplicationUser user) throws IOException {
-        return fileService.downloadFile(fileName, user);
+    public Resource downloadFile(@RequestParam("filename") String fileName) throws IOException {
+        return fileService.downloadFile(fileName);
     }
 
     @PutMapping("/file")
-    public EditFileRequest editFileName(@RequestParam("filename") String fileName,
-                                        @RequestBody EditFileRequest fileRequest,
-                                        @AuthenticationPrincipal ApplicationUser user) throws IOException {
-        return fileService.editFileName(fileName, fileRequest, user);
+    public ResponseEntity<String> editFileName(@RequestHeader("auth-token") String authToken,
+                                               @RequestParam("filename") String oldFileName,
+                                               @RequestBody Map<String,String> newFileName) {
+        fileService.editFileName(oldFileName, newFileName);
+        return new ResponseEntity<>("Success upload", HttpStatus.OK);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<FileDTO>> getAllFiles(@RequestParam(defaultValue = "5") Integer limit,
-                                                     @AuthenticationPrincipal ApplicationUser user) {
-        List<FileDTO> files = fileService.getAllFiles(limit, user);
+    public ResponseEntity<List<FileDTO>> getAllFiles(@RequestHeader("auth-token") String authToken,
+                                                     @RequestParam("limit") int limit) throws IOException {
+        List<FileDTO> files = fileService.getAllFiles(authToken, limit);
         return ResponseEntity.ok(files);
     }
-
-//    @GetMapping("/list")
-//    public ResponseEntity<List<FileDTO>> getAllFiles(@RequestParam(defaultValue = "5") Integer limit,
-//                                                     @AuthenticationPrincipal ApplicationUser user) {
-//        List<FileDTO> files = fileService.getAllFiles(limit, user);
-//        return new ResponseEntity<>(files, HttpStatus.OK);
-//    }
 
 }

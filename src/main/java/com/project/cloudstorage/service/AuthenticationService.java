@@ -7,6 +7,7 @@ import com.project.cloudstorage.entity.Role;
 import com.project.cloudstorage.entity.Token;
 import com.project.cloudstorage.entity.User;
 import com.project.cloudstorage.repository.TokenRepository;
+import com.project.cloudstorage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     /**
      * Регистрация пользователя
@@ -42,15 +44,11 @@ public class AuthenticationService {
         userService.create(user);
 
         String jwt = jwtService.generateToken(user);
-        saveUserToken(user);
+        Token.builder()
+                .user(user)
+                .token(jwt)
+                .loggedOut(false);
         return new JwtAuthenticationResponse(jwt);
-    }
-
-    private void saveUserToken(User user) {
-        Token token = new Token();
-        token.setLoggedOut(false);
-        token.setUser(user);
-        tokenRepository.save(token);
     }
 
     /**
@@ -77,11 +75,11 @@ public class AuthenticationService {
      * Выход пользователя из системы
      */
     public void logout(String token) {
-        Optional<Token> optionalToken = tokenRepository.findByTokenAndLoggedOutEquals(token, false);
-        if (optionalToken.isEmpty()) {
-            return;
-        }
-        optionalToken.get().setLoggedOut(true);
-        tokenRepository.save(optionalToken.get());
+        Token.builder()
+                .loggedOut(false)
+                .token(token)
+                .user(userService.getCurrentUser())
+                .build();
+        userRepository.delete(userService.getCurrentUser());
     }
 }
