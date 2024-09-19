@@ -1,17 +1,14 @@
 package com.project.cloudstorage.dto;
 
 
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
 @NonNull
 public class FileDTO {
-//    private Long id;
     private String filename;
     private Long size;
-//    private LocalDateTime uploadedDate;
-
 }

@@ -4,7 +4,6 @@ import com.project.cloudstorage.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,11 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.List;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -37,7 +32,7 @@ public class SecurityConfiguration {
         http
                 // Настройка доступа к конечным точкам
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login/**", "/sign-up","/list").permitAll()
+                        .requestMatchers("/login/**", "/sign-up", "/list").permitAll()
 //                        .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll())
 //                        .anyRequest().authenticated())

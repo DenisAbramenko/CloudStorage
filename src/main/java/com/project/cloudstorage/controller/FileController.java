@@ -1,7 +1,6 @@
 package com.project.cloudstorage.controller;
 
 import com.project.cloudstorage.dto.FileDTO;
-//import com.project.cloudstorage.security.ApplicationUser;
 import com.project.cloudstorage.service.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -23,10 +22,9 @@ public class FileController {
 
     @PostMapping("/file")
     public void uploadFile(
-//            @RequestParam("hash") String hash,
             @RequestParam("file") MultipartFile file,
             @RequestParam("filename") String fileName) throws IOException {
-        fileService.saveFile(file, fileName);
+        fileService.saveFile(file, fileName, fileService.getFilePath());
     }
 
     @DeleteMapping("/file")
@@ -42,7 +40,7 @@ public class FileController {
     @PutMapping("/file")
     public ResponseEntity<String> editFileName(@RequestHeader("auth-token") String authToken,
                                                @RequestParam("filename") String oldFileName,
-                                               @RequestBody Map<String,String> newFileName) {
+                                               @RequestBody Map<String, String> newFileName) {
         fileService.editFileName(oldFileName, newFileName);
         return new ResponseEntity<>("Success upload", HttpStatus.OK);
     }

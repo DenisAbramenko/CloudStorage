@@ -1,7 +1,9 @@
 package com.project.cloudstorage.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -23,12 +25,4 @@ public class File {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public File(String newFilename, byte[] fileContent) {
-    }
-
-
-//    public File(String newFileName) {
-//        this.name = newFileName;
-//    }
 }

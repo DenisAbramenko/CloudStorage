@@ -6,7 +6,6 @@ import com.project.cloudstorage.dto.SignUpRequest;
 import com.project.cloudstorage.entity.Role;
 import com.project.cloudstorage.entity.Token;
 import com.project.cloudstorage.entity.User;
-import com.project.cloudstorage.repository.TokenRepository;
 import com.project.cloudstorage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -24,7 +21,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
 
     /**

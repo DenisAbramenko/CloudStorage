@@ -50,8 +50,6 @@ public class UserService {
 
     /**
      * Получение пользователя по имени пользователя
-     * <p>
-     * Нужен для Spring Security
      *
      * @return пользователь
      */
@@ -65,7 +63,6 @@ public class UserService {
      * @return текущий пользователь
      */
     public User getCurrentUser() {
-        // Получение имени пользователя из контекста Spring Security
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
     }
@@ -73,8 +70,6 @@ public class UserService {
 
     /**
      * Выдача прав администратора текущему пользователю
-     * <p>
-     * Нужен для демонстрации
      */
     @Deprecated
     public void getAdmin() {
