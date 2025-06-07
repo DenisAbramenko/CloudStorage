@@ -1,31 +1,86 @@
-# «Облачное хранилище»
- 
- ## Описание проекта
- 
- Сервис предоставляет REST-интерфейс для загрузки файлов и вывода списка уже загруженных файлов пользователя. 
- 
- ## Описание и запуск FRONT
- 
- 1. Установите nodejs (версия не ниже 19.7.0) на компьютер, следуя [инструкции](https://nodejs.org/ru/download/current/).
- 2. Скачайте [FRONT](./netology-diplom-frontend) (JavaScript).
- 3. Перейдите в папку FRONT приложения и все команды для запуска выполняйте из неё.
- 4. Следуя описанию README.md FRONT проекта, запустите nodejs-приложение (`npm install`, `npm run serve`).
- 5. Далее нужно задать url для вызова своего backend-сервиса.
-     1. В файле `.env` FRONT (находится в корне проекта) приложения нужно изменить url до backend, например: `VUE_APP_BASE_URL=http://localhost:8080`. 
-        1. Нужно указать корневой url вашего backend, к нему frontend будет добавлять все пути согласно спецификации
-        2. Для `VUE_APP_BASE_URL=http://localhost:8080` при выполнении логина frontend вызовет `http://localhost:8080/login`
-     2. Запустите FRONT снова: `npm run serve`.
-     3. Изменённый `url` сохранится для следующих запусков.
- 6. По умолчанию FRONT запускается на порту 8080 и доступен по url в браузере `http://localhost:8080`. 
-    1. Если порт 8080 занят, FRONT займёт следующий доступный (`8081`). После выполнения `npm run serve` в терминале вы увидите, на каком порту он запустился. 
- 
- ## Авторизация приложения
- 
- FRONT-приложение использует header `auth-token`, в котором отправляет токен (ключ-строка) для идентификации пользователя на BACKEND.
- FRONT-приложение должно использовать header `auth-token`, в котором должно отправить токен (ключ-строка) для идентификации пользователя на BACKEND.
- Для получения токена нужно пройти авторизацию на BACKEND и отправить на метод /login логин и пароль. В случае успешной проверки в ответ BACKEND должен вернуть json-объект
- с полем `auth-token` и значением токена. Все дальейшие запросы с FRONTEND, кроме метода /login, отправляются с этим header.
- Для выхода из приложения нужно вызвать метод BACKEND /logout, который удалит/деактивирует токен. Последующие запросы с этим токеном будут не авторизованы и вернут код 401.
- 
- Обратите внимание, что название самого параметра (как и всех параметров в спецификации), его регистр имеют значение. 
- Важно, чтобы ваш backend возвращал токен в поле `auth-token` – если поле будет называться `authToken` или `authtoken`, фронт не сможет найти токен и дальше логина процесс не пройдёт.
+# Cloud Storage Service
+
+## Overview
+Cloud Storage is a RESTful service that allows users to store, retrieve, and manage their files in the cloud. The application provides a secure interface for file uploads, downloads, and management through a REST API.
+
+## Features
+- User authentication with JWT tokens
+- File upload and download
+- File management (list, rename, delete)
+- Secure storage of user files
+
+## Technology Stack
+- Java + Spring Boot
+- Spring Security with JWT authentication
+- PostgreSQL database
+- Spring Data JPA
+
+## Prerequisites
+- JDK 17 or later
+- PostgreSQL 14 or later
+- Maven 3.8+
+
+## Configuration
+The application can be configured through the `application.properties` file:
+
+```properties
+server.port=8081
+spring.application.name=CloudStorage
+spring.datasource.url=jdbc:postgresql://localhost:5432/postgres
+spring.datasource.username=postgres
+spring.datasource.password=mypassword
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+file.storage.path=C/Dev/Filestorage
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /login` - User login
+- `POST /logout` - User logout
+- `POST /sign-up` - User registration
+
+### File Operations
+- `POST /file` - Upload a file
+- `GET /file` - Download a file
+- `PUT /file` - Rename a file
+- `DELETE /file` - Delete a file
+- `GET /list` - Get list of files
+
+All endpoints except `/login` and `/sign-up` require authentication with the `auth-token` header.
+
+## Frontend Integration
+This backend service can be integrated with the provided frontend application. Follow these steps:
+
+1. Install Node.js (version 19.7.0 or higher) by following the [instructions](https://nodejs.org/en/download/current/).
+2. Download the frontend application from the `/netology-diplom-frontend` directory.
+3. Navigate to the frontend directory and run:
+   ```
+   npm install
+   npm run serve
+   ```
+4. Configure the backend URL in the `.env` file of the frontend project:
+   ```
+   VUE_APP_BASE_URL=http://localhost:8081
+   ```
+5. Restart the frontend application if necessary.
+
+## Authentication Flow
+1. The client sends login credentials to the `/login` endpoint
+2. The server validates credentials and returns a JWT token in the `auth-token` field
+3. For subsequent requests, the client must include this token in the `auth-token` header
+4. To logout, send a request to `/logout` with the token
+
+## Running the Application
+```
+mvn spring-boot:run
+```
+
+The application will start on port 8081 by default.
+
+## Security
+- All passwords are encrypted using BCrypt
+- JWT tokens are used for stateless authentication
+- File access is restricted to the file owner
